@@ -1079,13 +1079,13 @@
       };
 
       try {
-        const res = await fetch('https://formsubmit.co/ajax/kandeoai@gmail.com', {
+        const res = await fetch('https://formspree.io/f/mbdvdlav', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body:    JSON.stringify(payload),
         });
         const json = await res.json();
-        if (json.success === 'true' || json.success === true) {
+        if (json.ok) {
           btn.textContent = '✓ Message sent';
           btn.style.background = 'var(--s2)';
           btn.style.color = 'var(--green)';
