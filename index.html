@@ -56,7 +56,7 @@
     body, nav, nav *, .chat, .chat-bar, .chat-foot, .chat-foot input,
     .bub-u, .bub-a, .typing-bub, .feat-card, .ba-card, .tc, .prc,
     .pcol, .roi-box, .roi-fact, .cform, .fg input, .fg textarea,
-    footer, #theme-btn, #edit-btn, .ind-tag {
+    footer, #theme-btn, .ind-tag {
       transition:
         background-color 0.35s ease,
         border-color 0.35s ease,
@@ -537,17 +537,6 @@
     .foot-links a:hover { color:var(--mid); }
     .foot-copy { font-family:'Space Mono',monospace;font-size:.58rem;color:var(--dim);letter-spacing:.06em; }
 
-    /* ── EDIT TOGGLE ───────────────────────────── */
-    #edit-btn {
-      position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;
-      padding:.48rem .9rem;border-radius:100px;
-      border:1px solid var(--b2);font-family:'Space Mono',monospace;
-      font-size:.62rem;letter-spacing:.06em;cursor:pointer;
-      background:var(--s2);color:var(--mid);
-      box-shadow:0 4px 16px var(--shadow);
-    }
-    #edit-btn:hover { border-color:var(--teal);color:var(--ink); }
-    #edit-btn.on { background:var(--teal);color:#fff;border-color:var(--teal); }
 
     /* ── REDUCED MOTION ────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
@@ -843,19 +832,19 @@
       <div class="team-grid">
         <div class="tc">
           <div class="tc-av" aria-hidden="true">K</div>
-          <h3>Founder</h3>
+          <h3>Kaden</h3>
           <div class="tc-role">Strategy & Client Work</div>
           <p>Leads every engagement. Maps your enquiry flow, your channels, and where the assistant needs to be sharpest to recover leads.</p>
         </div>
         <div class="tc">
-          <div class="tc-av" aria-hidden="true">K</div>
-          <h3>Co-Founder</h3>
+          <div class="tc-av" aria-hidden="true">C</div>
+          <h3>Can</h3>
           <div class="tc-role">Engineering & Build</div>
           <p>Builds and ships the assistants. Handles channel integrations, calendar sync, and everything that makes it work reliably.</p>
         </div>
         <div class="tc">
           <div class="tc-av" aria-hidden="true">K</div>
-          <h3>Co-Founder</h3>
+          <h3>Kaan</h3>
           <div class="tc-role">Operations & Quality</div>
           <p>Monitors live conversations, catches where the assistant can sharpen, and keeps performance high after launch.</p>
         </div>
@@ -958,8 +947,7 @@
 
     (function() {
       let saved; try { saved = localStorage.getItem('kandeo-theme'); } catch(e) {}
-      const sys = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      applyTheme(saved || sys);
+      applyTheme(saved || 'light');
     })();
 
     themeBtn.addEventListener('click', () => {
@@ -1118,18 +1106,6 @@
       }
     }
 
-    /* ── EDIT TOGGLE ────────────────────────── */
-    const eb = document.createElement('button');
-    eb.id = 'edit-btn'; eb.textContent = '✏ EDIT';
-    eb.setAttribute('aria-pressed', 'false');
-    document.body.appendChild(eb);
-    eb.addEventListener('click', () => {
-      const on = document.designMode === 'on';
-      document.designMode = on ? 'off' : 'on';
-      eb.textContent = on ? '✏ EDIT' : '✓ EDITING';
-      eb.classList.toggle('on', !on);
-      eb.setAttribute('aria-pressed', String(!on));
-    });
   </script>
 </body>
 </html>
