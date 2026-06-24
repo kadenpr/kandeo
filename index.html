@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kandeo — AI Front Desk for Service Businesses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── DARK THEME ────────────────────────────── */
+    :root, [data-theme="dark"] {
+      --bg:       #07090e;
+      --s1:       #0c1018;
+      --s2:       #111820;
+      --b1:       #192030;
+      --b2:       #223045;
+      --teal:     #0d9e9a;
+      --teal-hi:  #16bdb8;
+      --teal-dim: rgba(13,158,154,0.1);
+      --ink:      #ece7df;
+      --mid:      #728090;
+      --dim:      #384858;
+      --green:    #34d399;
+      --shadow:   rgba(0,0,0,0.5);
+      --chat-bg:  #090d17;
+      --chat-bar: #0d1422;
+      --bub-u:    #1d2b42;
+      --chat-inp: rgba(255,255,255,0.03);
+    }
+
+    /* ── LIGHT THEME ───────────────────────────── */
+    [data-theme="light"] {
+      --bg:       #f4f0ea;
+      --s1:       #ebe5dc;
+      --s2:       #e2dbd1;
+      --b1:       #d0c8bc;
+      --b2:       #b8b2a8;
+      --teal:     #0b8c88;
+      --teal-hi:  #0d9e9a;
+      --teal-dim: rgba(11,140,136,0.1);
+      --ink:      #111820;
+      --mid:      #4a5a6c;
+      --dim:      #7a8898;
+      --green:    #058060;
+      --shadow:   rgba(0,0,0,0.12);
+      --chat-bg:  #e8e2d9;
+      --chat-bar: #ddd7cd;
+      --bub-u:    #c2d4e8;
+      --chat-inp: rgba(0,0,0,0.04);
+    }
+
+    /* ── THEME TRANSITIONS ─────────────────────── */
+    body, nav, nav *, .chat, .chat-bar, .chat-foot, .chat-foot input,
+    .bub-u, .bub-a, .typing-bub, .feat-card, .ba-card, .tc, .prc,
+    .pcol, .roi-box, .roi-fact, .cform, .fg input, .fg textarea,
+    footer, #theme-btn, #edit-btn, .ind-tag {
+      transition:
+        background-color 0.35s ease,
+        border-color 0.35s ease,
+        color 0.35s ease,
+        box-shadow 0.35s ease;
+    }
+
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body {
+      font-family: 'Hanken Grotesk', sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1,h2,h3 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+    .label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.67rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal);
+      display: block;
+      margin-bottom: 1rem;
+    }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+
+    /* ── BUTTONS ───────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-teal { background: var(--teal); color: #fff; }
+    .btn-teal:hover {
+      background: var(--teal-hi);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(13,158,154,0.28);
+    }
+    .btn-ghost { border: 1.5px solid var(--b2); color: var(--ink); background: transparent; }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-lg { padding: 0.85rem 2rem; font-size: 1rem; }
+
+    /* ── NAV ───────────────────────────────────── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 200;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-color: var(--b1);
+    }
+    .nav-in {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .logo {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--teal);
+      text-decoration: none;
+      letter-spacing: -0.04em;
+    }
+    .nav-links { list-style: none; display: flex; gap: 2.5rem; }
+    .nav-links a {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    /* ── THEME TOGGLE ──────────────────────────── */
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .theme-wrap { display: flex; align-items: center; gap: 0.4rem; }
+    .theme-icon {
+      font-size: 0.7rem;
+      color: var(--dim);
+      user-select: none;
+      line-height: 1;
+      transition: color 0.35s;
+    }
+    [data-theme="light"] .theme-icon { color: var(--mid); }
+    #theme-btn {
+      position: relative;
+      width: 44px; height: 25px;
+      border-radius: 100px;
+      border: 1.5px solid var(--b2);
+      background: var(--s2);
+      cursor: pointer;
+      flex-shrink: 0;
+      padding: 0;
+    }
+    #theme-btn:hover { border-color: var(--teal); }
+    #theme-btn::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 15px; height: 15px;
+      border-radius: 50%;
+      background: var(--mid);
+      transition: transform 0.28s cubic-bezier(0.34,1.2,0.64,1), background-color 0.25s;
+    }
+    [data-theme="light"] #theme-btn::after { transform: translateX(19px); background: var(--teal); }
+    [data-theme="light"] #theme-btn { border-color: rgba(11,140,136,0.35); background: var(--teal-dim); }
+    #theme-btn:hover::after { background: var(--teal); }
+
+    /* ── SECTION SHARED ────────────────────────── */
+    section { padding: 96px 2rem; }
+    .si { max-width: 1120px; margin: 0 auto; }
+    .sh { margin-bottom: 3.5rem; }
+    .sh h2 { font-size: clamp(1.9rem, 3vw, 2.6rem); margin-bottom: 0.75rem; }
+    .sh p { font-size: 1.05rem; color: var(--mid); line-height: 1.75; max-width: 520px; }
+
+    /* ── HERO ──────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 2rem 80px;
+      background:
+        radial-gradient(ellipse 55% 65% at 70% 50%, var(--teal-dim) 0%, transparent 65%),
+        var(--bg);
+    }
+    .hero-in {
+      max-width: 1120px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 5rem;
+      align-items: center;
+    }
+    .hero h1 { font-size: clamp(2.8rem, 5vw, 4rem); margin-bottom: 1.4rem; }
+    .hero h1 em { font-style: normal; color: var(--teal); }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--mid);
+      line-height: 1.75;
+      max-width: 460px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .channels { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+    .channel {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.7rem;
+      border-radius: 100px;
+      border: 1px solid var(--b2);
+      color: var(--dim);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .channel:hover { border-color: var(--teal); color: var(--teal); }
+
+    /* ── CHAT DEMO ─────────────────────────────── */
+    .demo-wrap { position: relative; }
+    .demo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -25%;
+      background: radial-gradient(ellipse, var(--teal-dim) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .chat {
+      position: relative;
+      z-index: 1;
+      background: var(--chat-bg);
+      border: 1px solid var(--b2);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px var(--shadow), 0 0 0 1px rgba(13,158,154,0.04);
+    }
+    .chat-bar {
+      padding: 0.85rem 1.1rem;
+      background: var(--chat-bar);
+      border-bottom: 1px solid var(--b1);
+      display: flex; align-items: center; gap: 0.65rem;
+    }
+    .chat-av {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--teal-dim);
+      border: 1.5px solid rgba(13,158,154,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; font-weight: 700; color: var(--teal);
+    }
+    .chat-bar-name { font-size: 0.82rem; font-weight: 600; color: var(--ink); line-height: 1.2; }
+    .chat-bar-status {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem; color: var(--teal);
+      display: flex; align-items: center; gap: 0.3rem; margin-top: 1px;
+    }
+    .live-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--teal);
+      animation: livePulse 2.5s ease infinite;
+    }
+    @keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .chat-badge {
+      margin-left: auto;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem; color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase;
+      border: 1px solid var(--b1); border-radius: 4px; padding: 0.15rem 0.45rem;
+    }
+    .chat-msgs {
+      padding: 1rem; height: 290px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .chat-msgs::-webkit-scrollbar { display: none; }
+    .chat-msgs { scrollbar-width: none; }
+    .cm { display: flex; flex-direction: column; animation: msgIn 0.3s ease both; }
+    @keyframes msgIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+    .cm-time {
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.57rem; color: var(--dim);
+      text-transform: uppercase; letter-spacing: 0.07em;
+      margin: 0.2rem 0;
+    }
+    .cm-user { align-items: flex-end; }
+    .cm-ai, .cm-type { align-items: flex-start; }
+    .cm-done { align-items: center; margin-top: 0.25rem; }
+    .bub { padding: 0.55rem 0.85rem; font-size: 0.8rem; line-height: 1.55; max-width: 83%; }
+    .bub-u { background: var(--bub-u); color: var(--ink); border-radius: 14px 14px 4px 14px; }
+    .bub-a {
+      background: var(--teal-dim);
+      border: 1px solid rgba(13,158,154,0.2);
+      color: var(--ink);
+      border-radius: 14px 14px 14px 4px;
+    }
+    .typing-bub {
+      padding: 0.58rem 0.85rem;
+      background: var(--teal-dim); border: 1px solid rgba(13,158,154,0.2);
+      border-radius: 14px 14px 14px 4px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .td { width:5px;height:5px;border-radius:50%;background:var(--teal);opacity:.45;animation:tdot 1.2s ease infinite; }
+    .td:nth-child(2){animation-delay:.18s}.td:nth-child(3){animation-delay:.36s}
+    @keyframes tdot{0%,100%{opacity:.2;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+    .confirm-tag {
+      font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.04em;
+      background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.22);
+      color: var(--green); padding: 0.38rem 0.85rem; border-radius: 100px;
+    }
+    .chat-foot {
+      padding: 0.7rem 1rem; border-top: 1px solid var(--b1);
+      background: var(--chat-bar); display: flex; gap: 0.5rem; align-items: center;
+    }
+    .chat-foot input {
+      flex: 1; background: var(--chat-inp); border: 1px solid var(--b1); border-radius: 6px;
+      padding: 0.42rem 0.7rem; color: var(--dim);
+      font-family: 'Hanken Grotesk', sans-serif; font-size: 0.75rem;
+      outline: none; pointer-events: none;
+    }
+    .send-btn {
+      width:28px;height:28px;border-radius:6px;
+      background:var(--teal-dim);border:1px solid rgba(13,158,154,0.22);
+      color:var(--teal);font-size:.75rem;
+      display:flex;align-items:center;justify-content:center;
+    }
+
+    /* ── PROBLEM ───────────────────────────────── */
+    .problem {
+      background: var(--s1);
+      border-top: 1px solid var(--b1); border-bottom: 1px solid var(--b1);
+      padding: 72px 2rem;
+    }
+    .problem-head {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 700;
+      letter-spacing: -0.03em; margin-bottom: 3rem;
+      line-height: 1.25; max-width: 700px; color: var(--ink);
+    }
+    .problem-head span { color: var(--teal); }
+    .prob-cols { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+    .pcol { padding-top: 1.2rem; border-top: 1px solid var(--b1); }
+    .pcol h3 { font-family:'Bricolage Grotesque',sans-serif;font-size:.97rem;font-weight:700;margin-bottom:.55rem; }
+    .pcol p { font-size:.875rem;color:var(--mid);line-height:1.7; }
+
+    /* ── WHO IT'S FOR ──────────────────────────── */
+    .for-section { background: var(--bg); }
+    .for-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .for-text h2 { font-size: clamp(1.9rem,3vw,2.6rem); margin-bottom: 0.75rem; }
+    .for-text p { font-size: 1rem; color: var(--mid); line-height: 1.75; margin-bottom: 1.5rem; max-width: 440px; }
+    .for-text p:last-child { margin-bottom: 0; }
+    .fit-checks { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 0; }
+    .fit-check {
+      display: flex; align-items: flex-start; gap: 0.7rem;
+      font-size: 0.9rem; color: var(--mid); line-height: 1.5;
+    }
+    .fit-check .ck {
+      flex-shrink: 0;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--teal-dim);
+      border: 1px solid rgba(13,158,154,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; color: var(--teal); margin-top: 0.1rem;
+    }
+
+    .industry-cloud { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .ind-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.38rem 0.85rem; border-radius: 100px;
+      border: 1px solid var(--b2); color: var(--mid);
+      cursor: default;
+    }
+    .ind-tag:hover, .ind-tag.lit {
+      border-color: var(--teal); color: var(--teal); background: var(--teal-dim);
+    }
+    .ind-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--dim); margin-bottom: 1rem;
+    }
+
+    /* ── BEFORE / AFTER ────────────────────────── */
+    .ba-section { background: var(--s1); border-top: 1px solid var(--b1); }
+    .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .ba-card { border-radius:14px;padding:2rem;border:1px solid var(--b1); }
+    .before { background: var(--s2); }
+    .after  { background: var(--bg); border-color: rgba(13,158,154,0.22); }
+    .ba-tag { font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.2rem;display:block; }
+    .ba-tag.b { color: var(--dim); }
+    .ba-tag.a { color: var(--teal); }
+    .ba-card h3 { font-size:1.1rem;margin-bottom:1rem;letter-spacing:-.02em; }
+    .ba-steps { display:flex;flex-direction:column;gap:.65rem; }
+    .ba-step { font-size:.875rem;color:var(--mid);display:flex;align-items:flex-start;gap:.7rem;line-height:1.55; }
+    .ba-step .ico { flex-shrink:0;margin-top:.05rem; }
+    .ba-step.ok { color: var(--ink); }
+
+    /* ── FEATURES ──────────────────────────────── */
+    .features { background:var(--bg);border-top:1px solid var(--b1); }
+    .feat-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem; }
+    .feat-card {
+      background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.8rem;
+      transition: border-color 0.25s;
+    }
+    .feat-card:hover { border-color:rgba(13,158,154,0.3); }
+    .feat-n { font-family:'Space Mono',monospace;font-size:.6rem;color:var(--teal);letter-spacing:.1em;margin-bottom:1rem; }
+    .feat-card h3 { font-size:1.05rem;margin-bottom:.5rem; }
+    .feat-card p { font-size:.875rem;color:var(--mid);line-height:1.7; }
+
+    /* ── ROI ───────────────────────────────────── */
+    .roi { background:var(--s1);border-top:1px solid var(--b1); }
+    .roi-box {
+      background:var(--s2);border:1px solid rgba(13,158,154,0.18);
+      border-radius:20px;padding:3rem;
+      display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;
+    }
+    .roi-box h2 { font-size:clamp(1.7rem,2.5vw,2.2rem);margin-bottom:1rem; }
+    .roi-box h2 em { font-style:normal;color:var(--teal); }
+    .roi-body { font-size:.95rem;color:var(--mid);line-height:1.75; }
+    .roi-body+.roi-body { margin-top:.85rem; }
+    .roi-cta { margin-top:1.8rem; }
+    .roi-facts { display:flex;flex-direction:column;gap:1rem; }
+    .roi-fact {
+      padding:1.1rem 1.3rem;background:var(--s1);
+      border:1px solid var(--b1);border-left:2px solid var(--teal);border-radius:10px;
+    }
+    .rf-label { font-family:'Space Mono',monospace;font-size:.58rem;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem; }
+    .rf-val { font-size:.875rem;color:var(--ink);line-height:1.5; }
+
+    /* ── PROCESS ───────────────────────────────── */
+    .process { background:var(--bg);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1); }
+    .proc-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:2rem; }
+    .prc { padding-top:1.3rem;border-top:1px solid var(--b2); }
+    .prc-n { font-family:'Space Mono',monospace;font-size:.6rem;color:var(--teal);letter-spacing:.1em;margin-bottom:.85rem; }
+    .prc h3 { font-size:.97rem;margin-bottom:.45rem; }
+    .prc p { font-size:.875rem;color:var(--mid);line-height:1.7; }
+
+    /* ── TEAM ──────────────────────────────────── */
+    .team { background:var(--s1);border-top:1px solid var(--b1); }
+    .team-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem; }
+    .tc { background:var(--s2);border:1px solid var(--b1);border-radius:16px;padding:2rem;text-align:center; }
+    .tc-av {
+      width:58px;height:58px;border-radius:50%;background:var(--bg);
+      border:1.5px solid rgba(13,158,154,0.28);
+      display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;
+      font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:800;color:var(--teal);
+    }
+    .tc h3 { font-size:.95rem;margin-bottom:.2rem; }
+    .tc-role { font-family:'Space Mono',monospace;font-size:.58rem;color:var(--teal);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.7rem; }
+    .tc p { font-size:.82rem;color:var(--mid);line-height:1.65; }
+
+    /* ── CTA STRIP ─────────────────────────────── */
+    .cta-strip {
+      background:var(--bg);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);
+      padding:96px 2rem;text-align:center;
+    }
+    .cta-strip h2 { font-size:clamp(2rem,4vw,3rem);margin-bottom:1rem; }
+    .cta-strip h2 em { font-style:normal;color:var(--teal); }
+    .cta-strip p { font-size:1rem;color:var(--mid);margin:0 auto 2.5rem;max-width:420px;line-height:1.75; }
+
+    /* ── CONTACT ───────────────────────────────── */
+    .contact { background:var(--s1); }
+    .contact-grid { display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start; }
+    .cinfo h2 { font-size:1.9rem;margin-bottom:1rem; }
+    .cinfo>p { font-size:.95rem;color:var(--mid);line-height:1.75;margin-bottom:2rem; }
+    .ci { display:flex;align-items:center;gap:.9rem;margin-bottom:1.2rem; }
+    .ci-ic {
+      width:36px;height:36px;border-radius:8px;
+      background:var(--teal-dim);border:1px solid rgba(13,158,154,0.18);
+      display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;
+    }
+    .ci-lbl { font-family:'Space Mono',monospace;font-size:.58rem;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px; }
+    .ci-val { font-size:.875rem;color:var(--mid); }
+    .ci-val a { color:var(--teal);text-decoration:none; }
+    .ci-val a:hover { text-decoration:underline; }
+    .cform { background:var(--s2);border:1px solid var(--b1);border-radius:16px;padding:2rem; }
+    .fg { margin-bottom:1.1rem; }
+    .fg label { display:block;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:.4rem; }
+    .fg input, .fg textarea {
+      width:100%;background:var(--bg);border:1px solid var(--b2);border-radius:7px;
+      padding:.65rem .9rem;font-family:'Hanken Grotesk',sans-serif;font-size:.9rem;
+      color:var(--ink);outline:none;-webkit-appearance:none;
+    }
+    .fg input::placeholder,.fg textarea::placeholder { color:var(--dim); }
+    .fg input:focus,.fg textarea:focus { border-color:var(--teal); }
+    .fg input:focus-visible,.fg textarea:focus-visible { outline:2px solid var(--teal);outline-offset:2px; }
+    .fg textarea { resize:vertical;min-height:100px; }
+    .frow { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+    .btn-sub { width:100%;padding:.85rem;font-size:.95rem;margin-top:.4rem;border-radius:7px; }
+
+    /* ── FOOTER ────────────────────────────────── */
+    footer { background:var(--s2);border-top:1px solid var(--b1);padding:2.5rem 2rem; }
+    .foot-in {
+      max-width:1120px;margin:0 auto;
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+    }
+    .foot-logo { font-family:'Bricolage Grotesque',sans-serif;font-size:1.2rem;font-weight:800;color:var(--teal);letter-spacing:-.04em; }
+    .foot-links { list-style:none;display:flex;gap:2rem; }
+    .foot-links a { font-size:.83rem;color:var(--dim);text-decoration:none;transition:color .2s; }
+    .foot-links a:hover { color:var(--mid); }
+    .foot-copy { font-family:'Space Mono',monospace;font-size:.58rem;color:var(--dim);letter-spacing:.06em; }
+
+    /* ── EDIT TOGGLE ───────────────────────────── */
+    #edit-btn {
+      position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;
+      padding:.48rem .9rem;border-radius:100px;
+      border:1px solid var(--b2);font-family:'Space Mono',monospace;
+      font-size:.62rem;letter-spacing:.06em;cursor:pointer;
+      background:var(--s2);color:var(--mid);
+      box-shadow:0 4px 16px var(--shadow);
+    }
+    #edit-btn:hover { border-color:var(--teal);color:var(--ink); }
+    #edit-btn.on { background:var(--teal);color:#fff;border-color:var(--teal); }
+
+    /* ── REDUCED MOTION ────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+
+    /* ── RESPONSIVE ────────────────────────────── */
+    @media (max-width: 980px) {
+      .hero-in { grid-template-columns:1fr;gap:3rem; }
+      .demo-wrap { max-width:420px; }
+      .for-inner { grid-template-columns:1fr;gap:3rem; }
+      .prob-cols { grid-template-columns:1fr;gap:1.5rem; }
+      .ba-grid { grid-template-columns:1fr; }
+      .feat-grid { grid-template-columns:1fr; }
+      .roi-box { grid-template-columns:1fr;gap:2rem;padding:2rem; }
+      .proc-grid { grid-template-columns:1fr; }
+      .team-grid { grid-template-columns:1fr 1fr; }
+      .contact-grid { grid-template-columns:1fr;gap:3rem; }
+      .nav-links { display:none; }
+    }
+    @media (max-width: 600px) {
+      .hero h1 { font-size:2.3rem; }
+      section, .problem, .cta-strip { padding:64px 1.5rem; }
+      .team-grid { grid-template-columns:1fr; }
+      .frow { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-in">
+      <a href="#" class="logo" aria-label="Kandeo home">Kandeo</a>
+      <ul class="nav-links" role="list">
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#who">Who it's for</a></li>
+        <li><a href="#team">Team</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="theme-wrap" aria-hidden="true">
+          <span class="theme-icon">☽</span>
+          <button id="theme-btn" aria-label="Switch to light mode" title="Toggle colour scheme"></button>
+          <span class="theme-icon">☀</span>
+        </div>
+        <a href="#contact" class="btn btn-teal">Book a call</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-h1">
+    <div class="hero-in">
+      <div>
+        <span class="label">AI front desk · 24/7 lead capture</span>
+        <h1 id="hero-h1">You paid for<br>those leads.<br><em>Don't ghost them.</em></h1>
+        <p class="hero-sub">Kandeo builds an AI assistant that responds to every inbound enquiry — Instagram DMs, web forms, missed calls — in seconds. Any hour. Trained on your business, your services, your calendar.</p>
+        <div class="hero-cta">
+          <a href="#how-it-works" class="btn btn-ghost btn-lg">See how it works</a>
+          <a href="#contact" class="btn btn-teal btn-lg">Book a free call</a>
+        </div>
+        <div class="channels" aria-label="Channels the assistant covers">
+          <span class="channel">Instagram DMs</span>
+          <span class="channel">Facebook Messenger</span>
+          <span class="channel">Web chat widget</span>
+          <span class="channel">Missed call → SMS</span>
+          <span class="channel">WhatsApp</span>
+        </div>
+      </div>
+
+      <div class="demo-wrap" role="img" aria-label="Demo: AI assistant responding to a late-night enquiry and confirming a booking">
+        <div class="chat">
+          <div class="chat-bar">
+            <div class="chat-av" aria-hidden="true">K</div>
+            <div style="flex:1">
+              <div class="chat-bar-name">Kandeo Assistant</div>
+              <div class="chat-bar-status">
+                <span class="live-dot" aria-hidden="true"></span>
+                Live · replies in seconds
+              </div>
+            </div>
+            <div class="chat-badge" aria-hidden="true">Web chat</div>
+          </div>
+          <div class="chat-msgs" id="chat-msgs" aria-live="polite" aria-label="Demo conversation"></div>
+          <div class="chat-foot" aria-hidden="true">
+            <input type="text" placeholder="Message..." readonly tabindex="-1" />
+            <div class="send-btn">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <div class="problem" role="region" aria-label="The problem">
+    <div class="si">
+      <p class="problem-head">Most businesses run good marketing.<br><span>Their follow-up runs on luck.</span></p>
+      <div class="prob-cols">
+        <div class="pcol">
+          <h3>Enquiries don't keep office hours</h3>
+          <p>Your potential clients search, browse, and reach out in the evenings and at weekends. By the time you see the message, they've already moved on.</p>
+        </div>
+        <div class="pcol">
+          <h3>Speed of first reply decides who wins</h3>
+          <p>People rarely wait for the second-best response. The first business to reply with a real, helpful answer is usually the one that gets the booking.</p>
+        </div>
+        <div class="pcol">
+          <h3>You're leaking spend at the reply stage</h3>
+          <p>Every unanswered DM and cold web form is a lead your marketing budget already paid for — handed to a competitor because no one responded fast enough.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHO IT'S FOR -->
+  <section id="who" class="for-section" aria-labelledby="for-h">
+    <div class="si">
+      <div class="for-inner">
+        <div class="for-text">
+          <span class="label">Who it's for</span>
+          <h2 id="for-h">Any business where a slow reply costs a client.</h2>
+          <p>Kandeo works for any service business that gets inbound enquiries and wins or loses clients based on how fast they respond. If these sound familiar, we're built for you:</p>
+          <div class="fit-checks">
+            <div class="fit-check"><span class="ck">✓</span>Clients enquire before they buy — they don't just walk in</div>
+            <div class="fit-check"><span class="ck">✓</span>Speed of first reply directly affects whether you win the business</div>
+            <div class="fit-check"><span class="ck">✓</span>Enquiries come in outside your working hours</div>
+            <div class="fit-check"><span class="ck">✓</span>A missed booking or consultation has real financial cost</div>
+          </div>
+        </div>
+        <div>
+          <p class="ind-label">Industries we work with</p>
+          <div class="industry-cloud" id="ind-cloud">
+            <span class="ind-tag">Estate agents</span>
+            <span class="ind-tag">Letting agencies</span>
+            <span class="ind-tag">Aesthetic clinics</span>
+            <span class="ind-tag">Dental practices</span>
+            <span class="ind-tag">Private GP surgeries</span>
+            <span class="ind-tag">Solicitors</span>
+            <span class="ind-tag">Accountants</span>
+            <span class="ind-tag">Wedding venues</span>
+            <span class="ind-tag">Event spaces</span>
+            <span class="ind-tag">Personal trainers</span>
+            <span class="ind-tag">Hair & beauty salons</span>
+            <span class="ind-tag">Physiotherapy</span>
+            <span class="ind-tag">Coaches & consultants</span>
+            <span class="ind-tag">Architects</span>
+            <span class="ind-tag">Interior designers</span>
+            <span class="ind-tag">Photographers</span>
+            <span class="ind-tag">Tradespeople</span>
+            <span class="ind-tag">Cleaning companies</span>
+            <span class="ind-tag">Tutors</span>
+            <span class="ind-tag">Restaurants</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEFORE / AFTER -->
+  <section class="ba-section" aria-labelledby="ba-h">
+    <div class="si">
+      <div class="sh">
+        <span class="label">What changes</span>
+        <h2 id="ba-h">Before and after.</h2>
+      </div>
+      <div class="ba-grid">
+        <div class="ba-card before">
+          <span class="ba-tag b">— Without Kandeo</span>
+          <h3>A lead slips through</h3>
+          <div class="ba-steps">
+            <div class="ba-step"><span class="ico">🌙</span>Someone enquires about your service at 10:30pm.</div>
+            <div class="ba-step"><span class="ico">🔇</span>No reply. Your team won't see it until morning.</div>
+            <div class="ba-step"><span class="ico">📱</span>They contact two or three competitors in the meantime.</div>
+            <div class="ba-step"><span class="ico">📅</span>One of them replies at 8am. The client books with them.</div>
+            <div class="ba-step"><span class="ico">💸</span>You paid for that lead. You didn't get the booking.</div>
+          </div>
+        </div>
+        <div class="ba-card after">
+          <span class="ba-tag a">✦ With Kandeo</span>
+          <h3>A booking is confirmed</h3>
+          <div class="ba-steps">
+            <div class="ba-step ok"><span class="ico">🌙</span>Someone enquires about your service at 10:30pm.</div>
+            <div class="ba-step ok"><span class="ico">⚡</span>Kandeo replies in seconds — trained on your services and availability.</div>
+            <div class="ba-step ok"><span class="ico">💬</span>Asks the right questions. Qualifies the lead naturally.</div>
+            <div class="ba-step ok"><span class="ico">📅</span>Books the appointment directly into your calendar.</div>
+            <div class="ba-step ok"><span class="ico">✓</span>You wake up to a confirmed booking.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works" class="features" aria-labelledby="feat-h">
+    <div class="si">
+      <div class="sh">
+        <span class="label">How the assistant works</span>
+        <h2 id="feat-h">Your front desk. Always on.</h2>
+        <p>Trained on your services, pricing, FAQs, and booking availability. Handles the entire first-touch conversation so your team only picks up warm, qualified leads.</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-n">01</div>
+          <h3>Responds instantly, every time</h3>
+          <p>Across Instagram, Facebook, your website chat widget, missed-call SMS, and WhatsApp. No delays, no voicemail. Every enquiry gets a real, informed reply within seconds — day or night.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-n">02</div>
+          <h3>Qualifies the lead</h3>
+          <p>Asks the right questions — what they need, when they need it, what their budget looks like. By the time a lead reaches you, you know exactly who you're speaking to and whether they're ready to book.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-n">03</div>
+          <h3>Books the appointment</h3>
+          <p>Connects to your calendar and confirms the booking on the spot. Sends the client everything they need. Flags anything complex or urgent directly to you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROI -->
+  <section id="roi" class="roi" aria-labelledby="roi-h">
+    <div class="si">
+      <div class="roi-box">
+        <div>
+          <span class="label">The business case</span>
+          <h2 id="roi-h">One recovered booking can cover the <em>whole month.</em></h2>
+          <p class="roi-body">Whatever a client is worth to your business — whether that's £100 or £5,000 — letting an enquiry go unanswered is the most expensive thing you can do.</p>
+          <p class="roi-body">Kandeo pays for itself the moment it recovers a booking that would otherwise have gone dark. For most businesses, that happens within the first week.</p>
+          <div class="roi-cta">
+            <a href="#contact" class="btn btn-teal">See what it looks like for your business →</a>
+          </div>
+        </div>
+        <div class="roi-facts">
+          <div class="roi-fact">
+            <div class="rf-label">The opportunity</div>
+            <div class="rf-val">Every unanswered enquiry is a client your marketing already paid to attract. The spend happened — the only question is whether you capture the revenue.</div>
+          </div>
+          <div class="roi-fact">
+            <div class="rf-label">What you're losing now</div>
+            <div class="rf-val">Slow and after-hours replies routinely convert to zero — not because the lead wasn't interested, but because someone else replied faster.</div>
+          </div>
+          <div class="roi-fact">
+            <div class="rf-label">What Kandeo costs</div>
+            <div class="rf-val">A fraction of one recovered booking. We'll give you a specific number on your free call — no vague pricing, no surprises.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" aria-labelledby="proc-h">
+    <div class="si">
+      <div class="sh">
+        <span class="label">How we work</span>
+        <h2 id="proc-h">Live in weeks, not months.</h2>
+        <p>Three steps. No long contracts, no enterprise onboarding. You'll have a working assistant before you've paid for two months.</p>
+      </div>
+      <div class="proc-grid">
+        <div class="prc">
+          <div class="prc-n">01</div>
+          <h3>Free discovery call</h3>
+          <p>30 minutes. We learn how your business works, what you're asked most, and where enquiries are dropping. No commitment — just a clear picture of what's possible.</p>
+        </div>
+        <div class="prc">
+          <div class="prc-n">02</div>
+          <h3>We build and train the assistant</h3>
+          <p>We set it up, train it on your services and content, connect it to your channels and calendar, and run it by you before anything goes live. You stay in control throughout.</p>
+        </div>
+        <div class="prc">
+          <div class="prc-n">03</div>
+          <h3>It goes live — you get the bookings</h3>
+          <p>Your assistant handles enquiries around the clock. You see every conversation, get alerted on anything urgent, and watch your calendar fill up.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section id="team" class="team" aria-labelledby="team-h">
+    <div class="si">
+      <div class="sh">
+        <span class="label">Who we are</span>
+        <h2 id="team-h">A focused team.<br>One clear mission.</h2>
+        <p>We built Kandeo because we kept seeing the same thing — good businesses losing good leads to slow replies. We're fixing exactly that.</p>
+      </div>
+      <div class="team-grid">
+        <div class="tc">
+          <div class="tc-av" aria-hidden="true">K</div>
+          <h3>Founder</h3>
+          <div class="tc-role">Strategy & Client Work</div>
+          <p>Leads every engagement. Maps your enquiry flow, your channels, and where the assistant needs to be sharpest to recover leads.</p>
+        </div>
+        <div class="tc">
+          <div class="tc-av" aria-hidden="true">K</div>
+          <h3>Co-Founder</h3>
+          <div class="tc-role">Engineering & Build</div>
+          <p>Builds and ships the assistants. Handles channel integrations, calendar sync, and everything that makes it work reliably.</p>
+        </div>
+        <div class="tc">
+          <div class="tc-av" aria-hidden="true">K</div>
+          <h3>Co-Founder</h3>
+          <div class="tc-role">Operations & Quality</div>
+          <p>Monitors live conversations, catches where the assistant can sharpen, and keeps performance high after launch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-strip" role="complementary">
+    <h2>Stop losing leads<br>you <em>already paid for.</em></h2>
+    <p>Book a free 30-minute call. We'll map out exactly what your business is missing — and what it would take to fix it.</p>
+    <a href="#contact" class="btn btn-teal btn-lg">Book a free call</a>
+  </div>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact" aria-labelledby="contact-h">
+    <div class="si">
+      <div class="contact-grid">
+        <div class="cinfo">
+          <span class="label">Get in touch</span>
+          <h2 id="contact-h">Let's talk about your business</h2>
+          <p>Tell us about your business and where enquiries are slipping through. We'll get back to you within 24 hours — usually much less.</p>
+          <div class="ci">
+            <div class="ci-ic" aria-hidden="true">📧</div>
+            <div>
+              <div class="ci-lbl">Email</div>
+              <div class="ci-val"><a href="mailto:kandeoai@gmail.com">kandeoai@gmail.com</a></div>
+            </div>
+          </div>
+          <div class="ci">
+            <div class="ci-ic" aria-hidden="true">📍</div>
+            <div>
+              <div class="ci-lbl">Based in</div>
+              <div class="ci-val">London, UK</div>
+            </div>
+          </div>
+          <div class="ci">
+            <div class="ci-ic" aria-hidden="true">⏱</div>
+            <div>
+              <div class="ci-lbl">Response time</div>
+              <div class="ci-val">Within 24 hours, usually same day</div>
+            </div>
+          </div>
+        </div>
+        <div class="cform">
+          <form id="contact-form" onsubmit="handleSubmit(event)" novalidate>
+            <div class="frow">
+              <div class="fg">
+                <label for="fn">First name</label>
+                <input id="fn" type="text" name="first_name" placeholder="Alex" autocomplete="given-name" required />
+              </div>
+              <div class="fg">
+                <label for="ln">Last name</label>
+                <input id="ln" type="text" name="last_name" placeholder="Turner" autocomplete="family-name" required />
+              </div>
+            </div>
+            <div class="fg">
+              <label for="em">Email</label>
+              <input id="em" type="email" name="email" placeholder="alex@yourbusiness.com" autocomplete="email" required />
+            </div>
+            <div class="fg">
+              <label for="biz">Business name</label>
+              <input id="biz" type="text" name="business" placeholder="Your Business" />
+            </div>
+            <div class="fg">
+              <label for="msg">Where are enquiries slipping through?</label>
+              <textarea id="msg" name="message" placeholder="e.g. DMs go unanswered at night, web form leads go cold over weekends, missed calls never get followed up..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-teal btn-sub">Send message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer role="contentinfo">
+    <div class="foot-in">
+      <div class="foot-logo">Kandeo</div>
+      <ul class="foot-links" role="list">
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#who">Who it's for</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="foot-copy">© 2026 KANDEO</div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── THEME ──────────────────────────────── */
+    const html = document.documentElement;
+    const themeBtn = document.getElementById('theme-btn');
+
+    function applyTheme(mode) {
+      html.setAttribute('data-theme', mode);
+      themeBtn.setAttribute('aria-label', mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      try { localStorage.setItem('kandeo-theme', mode); } catch(e) {}
+    }
+
+    (function() {
+      let saved; try { saved = localStorage.getItem('kandeo-theme'); } catch(e) {}
+      const sys = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      applyTheme(saved || sys);
+    })();
+
+    themeBtn.addEventListener('click', () => {
+      applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    /* ── NAV SCROLL ─────────────────────────── */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    /* ── SMOOTH SCROLL ──────────────────────── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href');
+        if (id === '#') return;
+        const el = document.querySelector(id);
+        if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    /* ── CHAT DEMO ──────────────────────────── */
+    const msgBox = document.getElementById('chat-msgs');
+    const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const conv = [
+      { t:'time', v:'10:23 PM · Wednesday',                                                                             delay:400   },
+      { t:'user', v:'Hi — I found you online. Do you still have availability for new clients?',                         delay:1000  },
+      { t:'type',                                                                                                        delay:2100  },
+      { t:'ai',   v:"Hi! Yes, we do have availability. What kind of help are you looking for, and when were you hoping to get started?", delay:3500 },
+      { t:'user', v:"I need a consultation — as soon as possible really",                                               delay:5200  },
+      { t:'type',                                                                                                        delay:6100  },
+      { t:'ai',   v:"Of course. I have Thursday at 11am and Friday at 2pm available this week. Would either of those work for you?", delay:7500 },
+      { t:'user', v:"Thursday 11am is perfect",                                                                         delay:9000  },
+      { t:'type',                                                                                                        delay:9800  },
+      { t:'ai',   v:"Booked! Your consultation is confirmed for Thursday at 11am. I'll send confirmation with all the details shortly.", delay:11300 },
+      { t:'done', v:'✓ Consultation booked · Thu 26 Jun · 11:00 am',                                                   delay:12800 },
+    ];
+
+    let timers = [];
+
+    function clearChat() {
+      timers.forEach(clearTimeout); timers = [];
+      msgBox.innerHTML = '';
+      msgBox.style.transition = ''; msgBox.style.opacity = '1';
+    }
+
+    function addStep(step) {
+      if (step.t === 'ai' || step.t === 'done') {
+        const t = msgBox.querySelector('.cm-type'); if (t) t.remove();
+      }
+      const el = document.createElement('div');
+      el.className = 'cm cm-' + step.t;
+      if      (step.t === 'time') el.innerHTML = `<div class="cm-time">${step.v}</div>`;
+      else if (step.t === 'user') el.innerHTML = `<div class="bub bub-u">${step.v}</div>`;
+      else if (step.t === 'type') el.innerHTML = `<div class="typing-bub"><span class="td"></span><span class="td"></span><span class="td"></span></div>`;
+      else if (step.t === 'ai')   el.innerHTML = `<div class="bub bub-a">${step.v}</div>`;
+      else if (step.t === 'done') el.innerHTML = `<div class="confirm-tag">${step.v}</div>`;
+      msgBox.appendChild(el);
+      msgBox.scrollTop = msgBox.scrollHeight;
+    }
+
+    function runDemo() {
+      clearChat();
+      conv.forEach(step => { timers.push(setTimeout(() => addStep(step), step.delay)); });
+      timers.push(setTimeout(() => {
+        msgBox.style.transition = 'opacity 0.7s';
+        msgBox.style.opacity = '0';
+        timers.push(setTimeout(runDemo, 900));
+      }, 17000));
+    }
+
+    if (noMotion) {
+      conv.filter(s => s.t !== 'type').forEach(s => addStep(s));
+    } else {
+      runDemo();
+    }
+
+    /* ── INDUSTRY TAG SHIMMER ───────────────── */
+    if (!noMotion) {
+      const tags = Array.from(document.querySelectorAll('.ind-tag'));
+      let idx = 0;
+      setInterval(() => {
+        tags.forEach(t => t.classList.remove('lit'));
+        tags[idx].classList.add('lit');
+        idx = (idx + 1) % tags.length;
+      }, 550);
+    }
+
+    /* ── SCROLL FADE-IN ─────────────────────── */
+    if (!noMotion) {
+      const fadeEls = document.querySelectorAll('.feat-card,.prc,.tc,.ba-card,.pcol,.roi-fact,.fit-check');
+      fadeEls.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(16px)';
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      });
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'translateY(0)';
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      fadeEls.forEach(el => io.observe(el));
+    }
+
+    /* ── FORM ───────────────────────────────── */
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('button[type=submit]');
+      const orig = btn.textContent;
+
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      const payload = {
+        first_name: form.first_name.value,
+        last_name:  form.last_name.value,
+        email:      form.email.value,
+        business:   form.business.value,
+        message:    form.message.value,
+        _subject:   `New enquiry from ${form.first_name.value} ${form.last_name.value} — Kandeo`,
+        _replyto:   form.email.value,
+      };
+
+      try {
+        const res = await fetch('https://formsubmit.co/ajax/kandeoai@gmail.com', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+        const json = await res.json();
+        if (json.success === 'true' || json.success === true) {
+          btn.textContent = '✓ Message sent';
+          btn.style.background = 'var(--s2)';
+          btn.style.color = 'var(--green)';
+          setTimeout(() => {
+            btn.textContent = orig; btn.disabled = false;
+            btn.style.background = ''; btn.style.color = '';
+            form.reset();
+          }, 3500);
+        } else { throw new Error(); }
+      } catch {
+        btn.textContent = 'Something went wrong — try again';
+        btn.style.background = 'var(--s2)';
+        btn.style.color = '#e55';
+        setTimeout(() => {
+          btn.textContent = orig; btn.disabled = false;
+          btn.style.background = ''; btn.style.color = '';
+        }, 3000);
+      }
+    }
+
+    /* ── EDIT TOGGLE ────────────────────────── */
+    const eb = document.createElement('button');
+    eb.id = 'edit-btn'; eb.textContent = '✏ EDIT';
+    eb.setAttribute('aria-pressed', 'false');
+    document.body.appendChild(eb);
+    eb.addEventListener('click', () => {
+      const on = document.designMode === 'on';
+      document.designMode = on ? 'off' : 'on';
+      eb.textContent = on ? '✏ EDIT' : '✓ EDITING';
+      eb.classList.toggle('on', !on);
+      eb.setAttribute('aria-pressed', String(!on));
+    });
+  </script>
+</body>
+</html>
